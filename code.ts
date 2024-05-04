@@ -30,7 +30,6 @@ figma.ui.onmessage =  async (msg: {type: string, count: number}) => {
       await figma.loadFontAsync(text.fontName as FontName)
 
       const randomInt = getRandomInt()
-      console.log(randomInt)
       text.characters = animals[randomInt]
 
       text.fontSize = 64
@@ -38,7 +37,6 @@ figma.ui.onmessage =  async (msg: {type: string, count: number}) => {
       figma.currentPage.appendChild(text);
       nodes.push(text);
     }
-    console.log(nodes)
     figma.currentPage.selection = nodes;
     figma.viewport.scrollAndZoomIntoView(nodes);
   }
