@@ -12,23 +12,40 @@ figma.showUI(__html__);
 // Calls to "parent.postMessage" from within the HTML page will trigger this
 // callback. The callback will be passed the "pluginMessage" property of the
 // posted message.
-figma.ui.onmessage =  (msg: {type: string, count: number}) => {
+
+const animals = ['🦁','🐨','🐶','🐻','🐷','🐯','🐰','🐼','🐱','🐵']
+
+function getRandomInt() {
+  const max = animals.length
+  return Math.floor(Math.random() * max);
+}
+
+figma.ui.onmessage =  async (msg: {type: string, count: number}) => {
   // One way of distinguishing between different types of messages sent from
   // your HTML page is to use an object with a "type" property like this.
-  if (msg.type === 'create-rectangles') {
+  if (msg.type === 'create') {
     const nodes: SceneNode[] = [];
     for (let i = 0; i < msg.count; i++) {
-      const rect = figma.createRectangle();
-      rect.x = i * 150;
-      rect.fills = [{type: 'SOLID', color: {r: 1, g: 0.5, b: 0}}];
-      figma.currentPage.appendChild(rect);
-      nodes.push(rect);
+      const text = figma.createText()
+      await figma.loadFontAsync(text.fontName as FontName)
+
+      const randomInt = getRandomInt()
+      console.log(randomInt)
+      text.characters = animals[randomInt]
+
+      text.fontSize = 64
+      text.x = i * 100;
+      figma.currentPage.appendChild(text);
+      nodes.push(text);
     }
+    console.log(nodes)
     figma.currentPage.selection = nodes;
     figma.viewport.scrollAndZoomIntoView(nodes);
   }
 
   // Make sure to close the plugin when you're done. Otherwise the plugin will
   // keep running, which shows the cancel button at the bottom of the screen.
-  figma.closePlugin();
+  if (msg.type === 'close') {
+    figma.closePlugin();
+  }
 };
